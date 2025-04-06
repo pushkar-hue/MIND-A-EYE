@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - MINDAEYE</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #0D6EFD;
+            --light-blue: #E9F3FF;
+            --dark-navy: #0C2D62;
+            --gray-text: #666666;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .bg-primary-light-blue {
+            background-color: var(--light-blue);
+        }
+        .text-dark-navy {
+            color: var(--dark-navy);
+        }
+        .drag-active {
+            border-color: var(--primary-blue);
+            background-color: var(--light-blue);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold" style="color: var(--primary-blue);">MINDAEYE</a>
+                </div>
+                <div class="hidden md:flex space-x-6 items-center">
+                    <a href="/" class="text-dark-navy hover:text-blue-600">Home</a>
+                    <a href="/about" class="text-dark-navy hover:text-blue-600">About</a>
+                    <a href="/services" class="text-dark-navy hover:text-blue-600">Services</a>
+                    <a href="/upload" class="text-blue-600 font-medium">Upload</a>
+                    <a href="/consult" class="text-dark-navy hover:text-blue-600">Consult</a>
+                    <a href="/report" class="text-dark-navy hover:text-blue-600">Report</a>
+                    <a href="/signup" class="btn-primary ml-2">Sign Up</a>
+                    <a href="/chat" class="text-dark-navy hover:text-blue-600">Ask AI</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-toggle" class="text-dark-navy focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white px-4 pt-2 pb-3 space-y-1">
+            <a href="/" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Home</a>
+            <a href="/about" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">About</a>
+            <a href="/services" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Services</a>
+            <a href="/upload" class="block text-blue-600 font-medium px-3 py-2 rounded-md">Upload</a>
+            <a href="/consult" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Consult</a>
+            <a href="/report" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Report</a>
+            <a href="/signup" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Sign Up</a>
+            <a href="/chat" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Ask AI</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Upload Section -->
+        <section class="py-16 bg-primary-light-blue">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-8 text-center">
+                        <h1 class="text-3xl font-bold text-dark-navy mb-2">Upload Medical Image</h1>
+                        <p class="text-gray-text mb-6">Get AI-powered analysis of your medical images</p>
+                        
+                        <form id="uploadForm" class="space-y-6">
+                            <div>
+                                <label for="analysisType" class="block text-left text-sm font-medium text-dark-navy mb-1">Select Analysis Type</label>
+                                <select id="analysisType" name="analysisType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-primary-blue">
+                                    <option value="dr">Diabetic Retinopathy (Retinal Scan)</option>
+                                    <option value="brain_tumor">Brain Tumor (MRI Scan)</option>
+                                </select>
+                            </div>
+                            
+                            <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer transition">
+                                <div id="uploadContent">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <div class="mt-4 flex text-sm text-gray-600">
+                                        <label class="relative cursor-pointer bg-white rounded-md font-medium" style="color: var(--primary-blue);">
+                                            <span>Click to select a file</span>
+                                            <input id="fileInput" name="file" type="file" class="sr-only" accept="image/*">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">PNG, JPG, DICOM up to 10MB</p>
+                                </div>
+                                <div id="previewContainer" class="hidden">
+                                    <img id="imagePreview" src="#" alt="Preview" class="max-h-64 mx-auto mb-4">
+                                    <p id="fileName" class="text-sm font-medium text-gray-900"></p>
+                                    <button id="changeFile" type="button" class="mt-2 text-sm" style="color: var(--primary-blue);">Change file</button>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white hover:opacity-90 transition" style="background-color: var(--primary-blue);">
+                                Analyze Image
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section (Initially hidden) -->
+        <section id="resultsSection" class="py-16 bg-white hidden">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-8">
+                        <h2 class="text-2xl font-bold text-dark-navy mb-6">Analysis Results</h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-dark-navy mb-2">Uploaded Image</h3>
+                                <img id="resultImage" src="#" alt="Uploaded Image" class="w-full rounded-lg border border-gray-200">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-dark-navy mb-2">Diagnosis</h3>
+                                <div id="diagnosisResult" class="bg-primary-light-blue p-4 rounded-lg">
+                                    <p class="text-gray-text">Your image is being analyzed...</p>
+                                </div>
+                                
+                                <div class="mt-6">
+                                    <h3 class="text-lg font-semibold text-dark-navy mb-2">Next Steps</h3>
+                                    <div id="nextSteps" class="space-y-3">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 h-5 w-5 text-green-500">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <p class="ml-2 text-sm text-gray-text">Review your results carefully</p>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 h-5 w-5 text-green-500">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <p class="ml-2 text-sm text-gray-text">Consult with a specialist if needed</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6">
+                                    <button id="downloadReport" class="w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-md font-medium text-white hover:opacity-90 transition" style="background-color: var(--primary-blue);">
+                                        Download Full Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-navy text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="font-bold mb-4">MINDAEYE</h3>
+                <p class="text-sm">Advanced AI-powered medical image analysis for precise diagnostics</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="/" class="hover:text-primary-blue">Home</a></li>
+                    <li><a href="/services" class="hover:text-primary-blue">Services</a></li>
+                    <li><a href="/upload" class="hover:text-primary-blue">Upload Image</a></li>
+                    <li><a href="/about" class="hover:text-primary-blue">About Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Contact Us</h4>
+                <p class="text-sm">Email: support@mindaye.com</p>
+                <p class="text-sm">Phone: +123-456-7890</p>
+            </div>
+        </div>
+        <div class="text-center mt-8 text-sm text-gray-400">
+            © 2025 MINDAEYE. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const uploadForm = document.getElementById('uploadForm');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileNameDisplay = document.getElementById('fileName');
+        const uploadContent = document.getElementById('uploadContent');
+        const changeFileBtn = document.getElementById('changeFile');
+        const resultsSection = document.getElementById('resultsSection');
+        const diagnosisResult = document.getElementById('diagnosisResult');
+        const resultImage = document.getElementById('resultImage');
+
+        // Toggle mobile menu
+        document.getElementById("mobile-menu-toggle").addEventListener("click", () => {
+            const menu = document.getElementById("mobile-menu");
+            menu.classList.toggle("hidden");
+        });
+
+        // Drag-and-drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-active');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-active');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-active');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                showPreview(file);
+                fileInput.files = e.dataTransfer.files;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (file) showPreview(file);
+        });
+
+        changeFileBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                fileNameDisplay.textContent = file.name;
+                previewContainer.classList.remove('hidden');
+                uploadContent.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            const analysisType = document.getElementById('analysisType').value;
+
+            if (!file) {
+                alert('Please select an image to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file); // Change 'file' to 'image' to match backend expectation
+            
+            try {
+                diagnosisResult.innerHTML = '<p class="text-gray-text">Analyzing image...</p>';
+                resultImage.src = imagePreview.src;
+                resultsSection.classList.remove('hidden');
+
+                // Use the correct endpoint based on the analysis type
+                const endpoint = `/predict/${analysisType}`;
+                const response = await axios.post(endpoint, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
+                const result = response.data;
+                // Update to access the prediction field that the API returns
+                diagnosisResult.innerHTML = `<p class="text-dark-navy text-lg font-semibold">${result.prediction}</p>`;
+                
+                // Store the diagnosis result for the report
+                latest_result = result.prediction;
+                
+            } catch (error) {
+                console.error(error);
+                diagnosisResult.innerHTML = '<p class="text-red-500">An error occurred during analysis. Please try again later.</p>';
+            }
+        });
+        // Download report
+        document.getElementById('downloadReport').addEventListener('click', () => {
+            window.location.href = '/download_report';
+        });
+    </script>
+</body>
+</html>

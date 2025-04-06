@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINDAEYE - Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #0D6EFD;
+            --light-blue: #E9F3FF;
+            --dark-navy: #0C2D62;
+            --gray-text: #666666;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .bg-primary-light-blue {
+            background-color: var(--light-blue);
+        }
+        .text-dark-navy {
+            color: var(--dark-navy);
+        }
+    </style>
+</head>
+<body class="bg-primary-light-blue">
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-dark-navy">
+                    Create Your MINDAEYE Account
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Start your medical imaging journey
+                </p>
+            </div>
+            <form id="signupForm" class="mt-8 space-y-6">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="name" class="sr-only">Full Name</label>
+                        <input id="name" name="name" type="text" required 
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-blue focus:border-primary-blue focus:z-10 sm:text-sm" 
+                            placeholder="Full Name">
+                    </div>
+                    <div>
+                        <label for="email" class="sr-only">Email address</label>
+                        <input id="email" name="email" type="email" required 
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-blue focus:border-primary-blue focus:z-10 sm:text-sm" 
+                            placeholder="Email address">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" required 
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-blue focus:border-primary-blue focus:z-10 sm:text-sm" 
+                            placeholder="Password">
+                    </div>
+                    <div>
+                        <label for="confirm-password" class="sr-only">Confirm Password</label>
+                        <input id="confirm-password" name="confirm-password" type="password" required 
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-blue focus:border-primary-blue focus:z-10 sm:text-sm" 
+                            placeholder="Confirm Password">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="terms" name="terms" type="checkbox" required 
+                            class="h-4 w-4 text-primary-blue focus:ring-primary-blue border-gray-300 rounded">
+                        <label for="terms" class="ml-2 block text-sm text-gray-900">
+                            I agree to the Terms and Conditions
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" 
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:opacity-90 transition"
+                        style="background-color: var(--primary-blue);">
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+            <div class="text-center">
+                <p class="mt-2 text-sm text-gray-600">
+                    Already have an account? 
+                    <a href="#" onclick="loadPage('login')" class="font-medium text-primary-blue hover:text-dark-navy">
+                        Log in
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic client-side validation
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            // Prepare form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: password,
+                terms_accepted: document.getElementById('terms').checked
+            };
+
+            // Send signup request
+            axios.post('/signup', formData)
+                .then(function (response) {
+                    // Handle successful signup
+                    alert('Signup successful! Redirecting to login.');
+                    loadPage('login'); // Assuming you'll create a login page
+                })
+                .catch(function (error) {
+                    // Handle signup error
+                    console.error('Signup error:', error);
+                    alert('Signup failed. Please try again.');
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINDAEYE - AI Medical Image Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #0D6EFD;
+            --light-blue: #E9F3FF;
+            --dark-navy: #0C2D62;
+            --gray-text: #666666;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .bg-primary-light-blue {
+            background-color: var(--light-blue);
+        }
+        .text-dark-navy {
+            color: var(--dark-navy);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-blue) 100%);
+        }
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold" style="color: var(--primary-blue);">MINDAEYE</a>
+                </div>
+                <div class="hidden md:flex space-x-6 items-center">
+                    <a href="/" class="text-dark-navy hover:text-blue-600">Home</a>
+                    <a href="/about" class="text-dark-navy hover:text-blue-600">About</a>
+                    <a href="/services" class="text-dark-navy hover:text-blue-600">Services</a>
+                    <a href="/upload" class="text-dark-navy hover:text-blue-600">Upload</a>
+                    <a href="/consult" class="text-dark-navy hover:text-blue-600">Consult</a>
+                    <a href="/report" class="text-dark-navy hover:text-blue-600">Report</a>
+                    <a href="/signup" class="btn-primary ml-2">Sign Up</a>
+                    <a href="/chat" class="text-dark-navy hover:text-blue-600">Ask AI</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-toggle" class="text-dark-navy focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white px-4 pt-2 pb-3 space-y-1">
+            <a href="/" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Home</a>
+            <a href="/about" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">About</a>
+            <a href="/services" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Services</a>
+            <a href="/upload" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Upload</a>
+            <a href="/consult" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Consult</a>
+            <a href="/report" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Report</a>
+            <a href="/signup" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Sign Up</a>
+            <a href="/chat" class="block text-dark-navy hover:bg-light-blue px-3 py-2 rounded-md">Ask AI</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <section class="relative hero-gradient pt-16 pb-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="w-full max-w-3xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-dark-navy mb-4">
+                        AI-Powered Medical Diagnosis
+                    </h1>
+                    <p class="text-gray-text text-lg mb-6">
+                        MINDAEYE uses advanced deep learning to analyze medical images for accurate, rapid diagnosis of conditions like diabetic retinopathy and brain tumors.
+                    </p>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <a href="/signup" class="btn-primary inline-block">
+                            Create Account
+                        </a>
+                        <a href="/upload" class="border-2 px-6 py-3 rounded-full hover:bg-gray-50 transition inline-block" style="border-color: var(--primary-blue); color: var(--primary-blue);">
+                            Try Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-dark-navy mb-12">How MINDAEYE Works</h2>
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-xl font-bold" style="color: var(--primary-blue);">1</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">Sign Up</h3>
+                        <p class="text-gray-text">Create your MINDAEYE account to get started</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-xl font-bold" style="color: var(--primary-blue);">2</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">Upload Image</h3>
+                        <p class="text-gray-text">Upload your medical image for analysis</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-xl font-bold" style="color: var(--primary-blue);">3</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">AI Analysis</h3>
+                        <p class="text-gray-text">Our advanced AI processes and analyzes the image</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-xl font-bold" style="color: var(--primary-blue);">4</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">Get Results</h3>
+                        <p class="text-gray-text">Receive detailed diagnostic report and recommendations</p>
+                    </div>
+                </div>
+                <div class="text-center mt-12">
+                    <a href="/signup" class="btn-primary inline-block">
+                        Create Your Account
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-16 bg-primary-light-blue">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-dark-navy mb-12">Our Medical Services</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center feature-card">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" style="color: var(--primary-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">Diabetic Retinopathy</h3>
+                        <p class="text-gray-text mb-4">Advanced AI detection of diabetic eye disease stages from mild to proliferative</p>
+                        <a href="/upload" class="text-sm font-medium inline-block" style="color: var(--primary-blue);">Try It Now →</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center feature-card">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" style="color: var(--primary-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.871 4A17.926 17.926 0 003 12c0 2.874.673 5.59 1.871 8m14.13 0a17.926 17.926 0 001.87-8c0-2.874-.673-5.59-1.87-8M9 9h1.246a1 1 0 01.961.725l1.586 5.55a1 1 0 00.961.725H15m1-7h-.08a2 2 0 00-1.519.698L9.6 15.302A2 2 0 018.08 16H8"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">Brain Tumor</h3>
+                        <p class="text-gray-text mb-4">Intelligent classification of brain tumor types including glioma, meningioma, and pituitary tumors</p>
+                        <a href="/upload" class="text-sm font-medium inline-block" style="color: var(--primary-blue);">Try It Now →</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center feature-card">
+                        <div class="w-16 h-16 bg-primary-light-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" style="color: var(--primary-blue);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-dark-navy">Detailed Reports</h3>
+                        <p class="text-gray-text mb-4">Download comprehensive diagnostic reports with professional medical insights</p>
+                        <a href="/report" class="text-sm font-medium inline-block" style="color: var(--primary-blue);">Learn More →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-dark-navy mb-6">Ready to Get Started?</h2>
+                <p class="text-gray-text text-lg mb-8 max-w-2xl mx-auto">
+                    Join thousands of healthcare professionals using MINDAEYE for faster, more accurate diagnoses
+                </p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="/signup" class="btn-primary inline-block">
+                        Create Free Account
+                    </a>
+                    <a href="/about" class="border-2 px-6 py-3 rounded-full hover:bg-gray-50 transition inline-block" style="border-color: var(--primary-blue); color: var(--primary-blue);">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-navy text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="font-bold mb-4">MINDAEYE</h3>
+                <p class="text-sm">Advanced AI-powered medical image analysis for precise diagnostics</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="/" class="hover:text-primary-blue">Home</a></li>
+                    <li><a href="/services" class="hover:text-primary-blue">Services</a></li>
+                    <li><a href="/upload" class="hover:text-primary-blue">Upload Image</a></li>
+                    <li><a href="/signup" class="hover:text-primary-blue">Sign Up</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Contact Us</h4>
+                <p>Email: support@mindaeye.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+            </div>
+        </div>
+        <div class="text-center mt-6">
+            <p>&copy; 2025 MINDAEYE. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Mobile Menu Toggle -->
+    <script>
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu) {
+                        mobileMenu.classList.toggle('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
