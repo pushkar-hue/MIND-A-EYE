@@ -193,6 +193,10 @@ def report():
 def signup_page():
     return render_template('signup.html')
 
+@app.route('/chat')
+def chat_page():
+    return render_template('chat.html') 
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
