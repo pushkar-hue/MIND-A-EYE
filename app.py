@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 from torchvision import transforms, models
 from PIL import Image
+from chatbot import chatbot_response
 
 # === Initialize Flask App ===
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -18,6 +19,33 @@ MODEL_PATHS = {
     'brain_tumor': 'models/brain_tumor.pth',
 }
 model_cache = {}
+
+def get_latest_diagnosis_result():
+    """Function that returns the latest diagnosis result for the chatbot"""
+    global latest_result
+    
+    if not latest_result:
+        return {}
+        
+    result_copy = latest_result.copy()
+    
+    # Add additional information based on diagnosis type
+    if result_copy.get('result') in ['Mild', 'Moderate', 'Severe', 'Proliferate_DR']:
+        result_copy['condition_type'] = 'diabetic_retinopathy'
+        result_copy['recommended_specialist'] = 'Ophthalmologist'
+    elif result_copy.get('result') in ['glioma', 'meningioma', 'pituitary']:
+        result_copy['condition_type'] = 'brain_tumor'
+        result_copy['recommended_specialist'] = 'Neurologist'
+    elif result_copy.get('result') == 'No_DR':
+        result_copy['condition_type'] = 'normal'
+        result_copy['notes'] = 'No signs of diabetic retinopathy detected'
+    elif result_copy.get('result') == 'notumor':
+        result_copy['condition_type'] = 'normal'
+        result_copy['notes'] = 'No brain tumor detected'
+        
+    return result_copy
+    
+
 
 # === Lazy Model Loading ===
 def load_model(model_type):
@@ -125,12 +153,8 @@ def predict_brain_tumor():
 
 @app.route('/get_latest_result')
 def get_latest_result():
-    if latest_result.get('result') in ['Mild', 'Moderate', 'Severe', 'Proliferate_DR']:
-        latest_result['recommended_specialist'] = 'Ophthalmologist'
-    elif latest_result.get('result') in ['glioma', 'meningioma', 'pituitary']:
-        latest_result['recommended_specialist'] = 'Neurologist'
-    return jsonify(latest_result)
-
+    return jsonify(get_latest_diagnosis_result())
+    
 @app.route('/download_report')
 def download_report():
     patient_name = request.args.get('name', 'Anonymous')
@@ -158,7 +182,7 @@ def download_report():
     pdf.output(report_path)
 
     return send_file(report_path, as_attachment=True, download_name=f"{patient_name}_diagnosis_report.pdf")
-app.route('/chatbot', methods=['POST'])
+@app.route('/chatbot', methods=['POST'])
 def chatbot():
     data = request.get_json()
     if not data:
@@ -169,14 +193,12 @@ def chatbot():
         return jsonify({'response': 'Please enter a message.'})
 
     # Get latest diagnosis if available
-    latest_diagnosis = get_latest_diagnosis_result() if has_diagnosis() else None
+    latest_diagnosis = get_latest_diagnosis_result() if latest_result else None
     
     # Get chatbot response
     response = chatbot_response(user_message, latest_diagnosis)
     
-    return jsonify({'response': response})
-
-# Other UI routes (optional)
+    return jsonify({'response': response})# Other UI routes (optional)
 @app.route('/about')
 def about():
     return render_template('about.html')
