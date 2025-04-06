@@ -196,7 +196,8 @@ def chatbot():
     latest_diagnosis = get_latest_diagnosis_result() if latest_result else None
     
     # Get chatbot response
-    response = chatbot_response(user_message, latest_diagnosis)
+    # In app.py when calling chatbot_response:
+    response = chatbot_response(user_message, latest_diagnosis, get_latest_diagnosis_result)
     
     return jsonify({'response': response})# Other UI routes (optional)
 @app.route('/about')
