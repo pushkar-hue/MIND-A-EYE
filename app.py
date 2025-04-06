@@ -158,15 +158,23 @@ def download_report():
     pdf.output(report_path)
 
     return send_file(report_path, as_attachment=True, download_name=f"{patient_name}_diagnosis_report.pdf")
-
-@app.route('/chatbot', methods=['POST'])
+app.route('/chatbot', methods=['POST'])
 def chatbot():
-    data = request.json
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request format'}), 400
+        
     user_message = data.get('message', '')
     if not user_message:
         return jsonify({'response': 'Please enter a message.'})
 
-    return jsonify({'response': "I'm a helpful AI medical assistant. Please describe your symptoms or questions."})
+    # Get latest diagnosis if available
+    latest_diagnosis = get_latest_diagnosis_result() if has_diagnosis() else None
+    
+    # Get chatbot response
+    response = chatbot_response(user_message, latest_diagnosis)
+    
+    return jsonify({'response': response})
 
 # Other UI routes (optional)
 @app.route('/about')
