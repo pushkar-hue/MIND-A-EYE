@@ -7,7 +7,8 @@ import torch.nn as nn
 from torchvision import transforms, models
 from PIL import Image
 from chatbot import chatbot_response
-
+# Remove the function definition and import from utils instead
+from utils import get_latest_diagnosis_result
 # === Initialize Flask App ===
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
@@ -19,31 +20,6 @@ MODEL_PATHS = {
     'brain_tumor': 'models/brain_tumor.pth',
 }
 model_cache = {}
-
-def get_latest_diagnosis_result():
-    """Function that returns the latest diagnosis result for the chatbot"""
-    global latest_result
-    
-    if not latest_result:
-        return {}
-        
-    result_copy = latest_result.copy()
-    
-    # Add additional information based on diagnosis type
-    if result_copy.get('result') in ['Mild', 'Moderate', 'Severe', 'Proliferate_DR']:
-        result_copy['condition_type'] = 'diabetic_retinopathy'
-        result_copy['recommended_specialist'] = 'Ophthalmologist'
-    elif result_copy.get('result') in ['glioma', 'meningioma', 'pituitary']:
-        result_copy['condition_type'] = 'brain_tumor'
-        result_copy['recommended_specialist'] = 'Neurologist'
-    elif result_copy.get('result') == 'No_DR':
-        result_copy['condition_type'] = 'normal'
-        result_copy['notes'] = 'No signs of diabetic retinopathy detected'
-    elif result_copy.get('result') == 'notumor':
-        result_copy['condition_type'] = 'normal'
-        result_copy['notes'] = 'No brain tumor detected'
-        
-    return result_copy
     
 
 
