@@ -5,6 +5,8 @@ import re
 from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime
 from dotenv import load_dotenv
+# Import from utils instead of app
+from utils import get_latest_diagnosis_result
 
 # Load API Key (Replace with your actual API key in production)
 # Replace the entire line with:
