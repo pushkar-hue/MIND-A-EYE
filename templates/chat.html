@@ -177,7 +177,7 @@
                     <a href="/upload" class="text-dark-navy hover:text-blue-600">Upload</a>
                     <a href="/consult" class="text-dark-navy hover:text-blue-600">Consult</a>
                     <a href="/report" class="text-dark-navy hover:text-blue-600">Report</a>
-                    <a href="/signup" class="text-dark-navy hover:text-blue-600">Sign Up</a>
+                    <a href="/signup" class="btn-primary ml-2">Sign Up</a>
                 </div>
                 <div class="md:hidden">
                     <button id="mobile-menu-toggle" class="text-dark-navy focus:outline-none">
@@ -398,7 +398,7 @@
             document.getElementById('typing-indicator').style.display = 'inline-flex';
             
             // Fetch response from server
-            fetch('/chatbot', {
+            fetch('{{ url_for("chatbot") }}', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({message: userMessage})
@@ -474,7 +474,7 @@
         
         // Check if there are diagnosis results to display
         function checkForDiagnosisResults() {
-            fetch('/get_latest_result')
+            fetch('{{ url_for("get_latest_result") }}')
             .then(response => response.json())
             .then(data => {
                 if (data.result) {
@@ -492,7 +492,7 @@
                                 <h4 class="font-semibold text-primary-blue mb-2">Latest Diagnosis Result</h4>
                                 <p>Condition detected: <strong>${data.result}</strong></p>
                                 <p>For more information, you can ask me about this condition or download a detailed report.</p>
-                                <p><a href="/download_report?name=Patient" target="_blank" class="text-primary-blue hover:underline">Download Full Report</a></p>
+                                <p><a href="{{ url_for('download_report') }}?name=Patient" target="_blank" class="text-primary-blue hover:underline">Download Full Report</a></p>
                             </div>
                             <div class="text-xs text-gray-500 mt-2">${formatTime()}</div>
                         </div>
