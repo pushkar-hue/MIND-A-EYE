@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_file, session, redirect, url_for, flash
 from fpdf import FPDF
-
-import os  # Changed from 'from datetime import datetime'
+import os
 import torch
 import torch.nn as nn
 from torchvision import transforms, models
@@ -10,7 +9,7 @@ import google.generativeai as genai
 import json
 import re
 from typing import Dict, Any, List, Optional, Tuple
-from datetime import datetime, timedelta  # Keep this one for datetime.now() usage
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -19,22 +18,20 @@ import uuid
 from flask_mail import Mail, Message
 import io
 
-
-
 # === Initialize Flask App ===
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
-# Configure session
+# Configure session and mail
 load_dotenv()
-app.secret_key = os.getenv("SECRET_KEY", "neurovision-dev-secret-key")  # Replace with a proper secret key in production
+app.secret_key = os.getenv("SECRET_KEY", "neurovision-dev-secret-key")
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', 'mindaeye327@gmail.com')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'mindaeye327@gmail.com')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
 mail = Mail(app)
 
@@ -54,7 +51,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Initialize database
 init_db()
 
 # === Authentication Decorators ===
@@ -74,15 +70,13 @@ def get_user_by_email(email):
     c.execute("SELECT * FROM users WHERE email = ?", (email,))
     user = c.fetchone()
     conn.close()
-    if user:
-        return {
-            'id': user[0],
-            'name': user[1],
-            'email': user[2],
-            'password': user[3],
-            'created_at': user[4]
-        }
-    return None
+    return user and {
+        'id': user[0],
+        'name': user[1],
+        'email': user[2],
+        'password': user[3],
+        'created_at': user[4]
+    }
 
 def get_user_by_id(user_id):
     conn = sqlite3.connect('neurovision.db')
@@ -90,31 +84,29 @@ def get_user_by_id(user_id):
     c.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     user = c.fetchone()
     conn.close()
-    if user:
-        return {
-            'id': user[0],
-            'name': user[1],
-            'email': user[2],
-            'created_at': user[4]
-        }
-    return None
+    return user and {
+        'id': user[0],
+        'name': user[1],
+        'email': user[2],
+        'created_at': user[4]
+    }
 
 def create_user(name, email, password):
     user_id = str(uuid.uuid4())
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-    
-    conn = sqlite3.connect('neurovision.db')
-    c = conn.cursor()
     try:
+        conn = sqlite3.connect('neurovision.db')
+        c = conn.cursor()
         c.execute("INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)",
                  (user_id, name, email, hashed_password))
         conn.commit()
-        conn.close()
         return user_id
     except sqlite3.IntegrityError:
-        conn.close()
         return None
+    finally:
+        conn.close()
 
+        
 # === Globals ===
 latest_result = {}  # Stores the latest diagnosis result
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
